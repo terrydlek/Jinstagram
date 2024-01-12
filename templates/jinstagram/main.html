@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- Google Icon-->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+
+    <!-- jqury -->
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+
+    <title>Hello, world!</title>
+</head>
+<style>
+    .main_body {
+        display: flex;
+        justify-content: center;
+        padding-top: 50px;
+    }
+
+    .box {
+        width: 50px;
+        height: 50px;
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .box2 {
+        width: 60px;
+        height: 60px;
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .box3 {
+        width: 35px;
+        height: 35px;
+        border-radius: 70%;
+        overflow: hidden;
+    }
+
+    .profile {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .feed_box {
+        background-color: white;
+        width: 480px;
+        margin: 10px;
+    }
+
+    .modal_overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(1.5px);
+        -webkit-backdrop-filter: blur(1.5px);
+        z-index: 1000;
+    }
+
+    .modal_window {
+        background: white;
+        backdrop-filter: blur(13.5px);
+        -webkit-backdrop-filter: blur(13.5px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        width: 800px;
+        height: 600px;
+        position: relative;
+        padding: 10px;
+    }
+
+</style>
+
+<body>
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary"
+     style="position: fixed; width: 100%; z-index: 999; background-color: white">
+    <div class="container-fluid" style="justify-content: space-between; flex-wrap: nowrap; min-width: 1000px">
+        <a class="navbar-brand" href="/main"><img style="width: 100px"
+                                                  src="data:image/png;base64,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"></a>
+
+        <input class="form-control me-2" style="width: 400px" type="search" placeholder="Search" aria-label="Search">
+        <div style="display: flex">
+            <a href="/main" style="color: black"><span id="nav_bar_home" style="padding-right: 10px"
+                                                       class="material-symbols-outlined">home</span></a>
+            <span id="nav_bar_add_box" style="padding-right: 10px" class="material-symbols-outlined">add_box</span>
+
+            <div class="dropdown">
+                <a href="#" role="button" id="dropdownMenuLink"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="box" style="width: 25px; height: 25px">
+
+                        <img class="profile"
+                             src="{% get_media_prefix %}{{ user.profile_img }}">
+
+                    </div>
+                </a>
+
+                <ul class="dropdown-menu" style="left: -158px" aria-labelledby="dropdownMenuLink">
+                    <li><a class="dropdown-item" href="/content/profile">프로필</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="/user/logout">로그아웃</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+<div style="display: flex; flex-direction: row; text-align: center; justify-content: center; padding-top: 80px; background-color: #FAFAFA">
+    <div style="background-color: white; width: 500px; min-width: 500px; height: 3000px; margin-right: 300px; display: flex; flex-direction: column">
+        <!-- 피드박스 -->
+        {% for feed in feeds %}
+            <div class="border feed_box">
+                <div style="display: flex; flex-direction: row; align-items: center; margin: 0 20px">
+                    <div class="box" style="background: #BDBDBD;" style="width: 30px; height: 30px">
+                        <img class="profile" src="{% get_media_prefix %}{{ feed.profile_image }}">
+                    </div>
+                    <div style="margin: 0 20px">
+                        {{ feed.nickname }}
+                    </div>
+                </div>
+
+                <div><img style="width: 100%" src="{% get_media_prefix %}{{ feed.image }}">
+                </div>
+                <div style="display: flex; flex-direction: row; justify-content: space-between; margin: 0 20px">
+                    <div>
+                        <span id="favorite_{{ feed.id }}" feed_id="{{ feed.id }}"
+                              class="favorite material-symbols-outlined"
+                              style="color: red; cursor: pointer">
+                            {% if feed.is_like %}
+                                favorite
+                            {% else %}
+                                favorite_border
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div>
+                        <span id="bookmark_{{ feed.id }}" feed_id="{{ feed.id }}"
+                              class="bookmark material-symbols-outlined"
+                              style="color: red; cursor: pointer">
+                            {% if feed.is_marked %}
+                                bookmark
+                            {% else %}
+                                bookmark_border
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div style="text-align: left; font-size: 14px; margin: 0 20px">춘식이 <b>외 {{ feed.like_count }}명</b>이
+                    좋아합니다.
+                </div>
+                <div style="text-align: left; font-size: 16px; margin: 0 20px">
+                    <b>{{ feed.nickname }}</b> {{ feed.content }}</div>
+                <div id="reply_list_{{ feed.id }}">
+                    {% for reply in feed.reply_list %}
+                        <div style="text-align: left; font-size: 13px; margin: 0 20px">
+                            <b>{{ reply.nickname }}</b>{{ reply.reply_content }}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div style="display: flex; flex-direction: row;align-items: center; border-top: solid 1px gray">
+                    <input id="reply_{{ feed.id }}" type="text" class="form-control"
+                           style="box-shadow: none; border: none; outline: none"
+                           id="exampleFormControlInput1" placeholder="댓글 달기..">
+                    <div feed_id="{{ feed.id }}" class="upload_reply"
+                         style="width: 50px; color: cornflowerblue; font-weight: bold">
+                        게시
+                    </div>
+                </div>
+
+            </div>
+        {% endfor %}
+        <!-- 피드박스 -->
+
+    </div>
+    <div style="width: 400px; height: 1000px; position: fixed; left: 62%; z-index: 0">
+        <div>
+            <div style="display: flex; flex-direction: row; align-items: center; margin: 0 20px">
+                <div class="box2">
+                    <img class="profile"
+                         src="{% get_media_prefix %}{{ user.profile_img }}">
+                </div>
+                <div style="margin-left: 10px; text-align: left">
+                    <div style="font-weight: bold">
+                        {{ user.nickname }}
+                    </div>
+                    <div style="color: gray">
+                        {{ user.name }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: row; justify-content: space-between">
+            <div style="font-weight: bold; color: gray">
+                회원님을 위한 추천
+            </div>
+            <div>
+                <a href="#" style="text-decoration: none; color: black; font-weight: bold">모두 보기</a>
+            </div>
+        </div>
+        <div>
+            <div>
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                    <div style="display: flex; flex-direction: row">
+                        <div class="box3">
+                            <img class="profile"
+                                 src="http://file3.instiz.net/data/file3/2021/05/31/b/b/0/bb0daf32fcc008a282373d7865c2852c.png">
+                        </div>
+                        <div style="margin-left: 10px; text-align: left">
+                            <div style="font-weight: bold; font-size: 14px">
+                                aaaaaaaaaaaaaaa
+                            </div>
+                            <div style="color: gray">
+                                나랑 같이 치킨 먹음
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="#"
+                           style="font-size: 14px; font-weight: bold; color: black; text-decoration: none; color: blue">팔로우</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                    <div style="display: flex; flex-direction: row">
+                        <div class="box3">
+                            <img class="profile"
+                                 src="http://file3.instiz.net/data/file3/2021/05/31/b/b/0/bb0daf32fcc008a282373d7865c2852c.png">
+                        </div>
+                        <div style="margin-left: 10px; text-align: left">
+                            <div style="font-weight: bold; font-size: 14px">
+                                aaaaaaaaaaaaaaa
+                            </div>
+                            <div style="color: gray">
+                                나랑 같이 치킨 먹음
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="#"
+                           style="font-size: 14px; font-weight: bold; color: black; text-decoration: none; color: blue">팔로우</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                    <div style="display: flex; flex-direction: row">
+                        <div class="box3">
+                            <img class="profile"
+                                 src="http://file3.instiz.net/data/file3/2021/05/31/b/b/0/bb0daf32fcc008a282373d7865c2852c.png">
+                        </div>
+                        <div style="margin-left: 10px; text-align: left">
+                            <div style="font-weight: bold; font-size: 14px">
+                                aaaaaaaaaaaaaaa
+                            </div>
+                            <div style="color: gray">
+                                나랑 같이 치킨 먹음
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="#"
+                           style="font-size: 14px; font-weight: bold; color: black; text-decoration: none; color: blue">팔로우</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                    <div style="display: flex; flex-direction: row">
+                        <div class="box3">
+                            <img class="profile"
+                                 src="http://file3.instiz.net/data/file3/2021/05/31/b/b/0/bb0daf32fcc008a282373d7865c2852c.png">
+                        </div>
+                        <div style="margin-left: 10px; text-align: left">
+                            <div style="font-weight: bold; font-size: 14px">
+                                aaaaaaaaaaaaaaa
+                            </div>
+                            <div style="color: gray">
+                                나랑 같이 치킨 먹음
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="#"
+                           style="font-size: 14px; font-weight: bold; color: black; text-decoration: none; color: blue">팔로우</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                    <div style="display: flex; flex-direction: row">
+                        <div class="box3">
+                            <img class="profile"
+                                 src="http://file3.instiz.net/data/file3/2021/05/31/b/b/0/bb0daf32fcc008a282373d7865c2852c.png">
+                        </div>
+                        <div style="margin-left: 10px; text-align: left">
+                            <div style="font-weight: bold; font-size: 14px">
+                                aaaaaaaaaaaaaaa
+                            </div>
+                            <div style="color: gray">
+                                나랑 같이 치킨 먹음
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="#"
+                           style="font-size: 14px; font-weight: bold; color: black; text-decoration: none; color: blue">팔로우</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                    <div style="display: flex; flex-direction: row">
+                        <div class="box3">
+                            <img class="profile"
+                                 src="http://file3.instiz.net/data/file3/2021/05/31/b/b/0/bb0daf32fcc008a282373d7865c2852c.png">
+                        </div>
+                        <div style="margin-left: 10px; text-align: left">
+                            <div style="font-weight: bold; font-size: 14px">
+                                aaaaaaaaaaaaaaa
+                            </div>
+                            <div style="color: gray">
+                                나랑 같이 치킨 먹음
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="#"
+                           style="font-size: 14px; font-weight: bold; color: black; text-decoration: none; color: blue">팔로우</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                    <div style="display: flex; flex-direction: row">
+                        <div class="box3">
+                            <img class="profile"
+                                 src="http://file3.instiz.net/data/file3/2021/05/31/b/b/0/bb0daf32fcc008a282373d7865c2852c.png">
+                        </div>
+                        <div style="margin-left: 10px; text-align: left">
+                            <div style="font-weight: bold; font-size: 14px">
+                                aaaaaaaaaaaaaaa
+                            </div>
+                            <div style="color: gray">
+                                나랑 같이 치킨 먹음
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="#"
+                           style="font-size: 14px; font-weight: bold; color: black; text-decoration: none; color: blue">팔로우</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; font-size: 12px; color: gray; text-align: left"> 소개 도움말 홍보센터 API <br> 개인정보처리방침 약관
+            위치 인기 계정 해시태그 언어
+        </div>
+        <div style="margin-top: 20px; font-size: 12px; color: gray; text-align: left"> 2024 인스타그램 프롬 페이스북</div>
+
+    </div>
+</div>
+<!-- Optional JavaScript; choose one of the two! -->
+<!-- 첫번째 모달 -->
+<div id="first_modal" class="modal_overlay">
+    <div class="modal_window">
+        <div style="display: flex; flex-direction: row; justify-content: space-between">
+            <div style="width: 40px; background: gray">
+
+            </div>
+            <div>
+                새 이미지 업로드
+            </div>
+            <div style="background: gray; width: 40px">
+                <span class="modal_close material-symbols-outlined">close</span>
+            </div>
+        </div>
+
+        <div class="image_upload_space" style="border-top: solid gray; width: 778px; height: 540px; margin-top: 10px">
+
+        </div>
+    </div>
+</div>
+
+<!-- 두번째 모달-->
+<div id="second_modal" class="modal_overlay">
+    <div class="modal_window">
+        <div style="display: flex; flex-direction: row; justify-content: space-between">
+            <div style="width: 40px; background: gray">
+
+            </div>
+            <div>
+                새 이미지 업로드
+            </div>
+            <div style="background: gray; width: 40px">
+                <span class="modal_close material-symbols-outlined">close</span>
+            </div>
+        </div>
+        <div style="border-top: solid 1px gray; display: flex; flex-direction: row;margin-top: 10px">
+            <div class="image_upload_space" style="width: 500px; height: 540px">
+            </div>
+            <div style="border-left: solid 1px gray">
+                <div>
+                    <textarea id="input_feed_content" class="form-control" style="width: 276px; height: 400px"
+                              id="exampleFormControlTextarea1" rows="1"></textarea>
+                </div>
+
+                <button id="feed_create_button" type="button" class="btn btn-primary" style="width: 100%">
+                    공유하기
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('.bookmark').click(function (event) {
+        let feed_id = event.target.attributes.getNamedItem('feed_id').value;
+        let bookmark_id = event.target.id;
+        let bookmark_text = $.trim($('#' + bookmark_id).html())
+        console.log(bookmark_id);
+        console.log(bookmark_text);
+
+        if (bookmark_text == 'bookmark') {
+            $('#' + bookmark_id).html('bookmark_border');
+        } else {
+            $('#' + bookmark_id).html('bookmark');
+        }
+
+        $.ajax({
+            url: "/content/bookmark",
+            data: {
+                feed_id: feed_id,
+                bookmark_text: bookmark_text
+            },
+            method: "POST",
+            success: function (data) {
+                console.log("성공");
+            },
+            error: function (request, status, error) {
+                console.log("에러");
+            },
+            complete: function () {
+                console.log("완료");
+            }
+        })
+
+    })
+
+
+    $('.favorite').click(function (event) {
+        let feed_id = event.target.attributes.getNamedItem('feed_id').value;
+        let favorite_id = event.target.id;
+        let favorite_text = $.trim($('#' + favorite_id).html())
+        console.log(favorite_id);
+        console.log(favorite_text)
+        if (favorite_text == 'favorite') {
+            $('#' + favorite_id).html('favorite_border');
+        } else {
+            $('#' + favorite_id).html('favorite');
+        }
+
+        $.ajax({
+            url: "/content/like",
+            data: {
+                feed_id: feed_id,
+                favorite_text: favorite_text
+            },
+            method: "POST",
+            success: function (data) {
+                console.log("성공");
+            },
+            error: function (request, status, error) {
+                console.log("에러");
+            },
+            complete: function () {
+                console.log("완료");
+            }
+        })
+
+    })
+
+
+    $('.upload_reply').click(function (e) {
+        let feed_id = e.target.attributes.getNamedItem('feed_id').value;
+        let reply_id = 'reply_' + feed_id;
+        let reply_content = $('#' + reply_id).val()
+        if (reply_content.length <= 0) {
+            alert("댓글을 입력하세여");
+            return 0;
+        }
+
+        $.ajax({
+            url: "/content/reply",
+            data: {
+                feed_id: feed_id,
+                reply_content: reply_content
+            },
+            method: "POST",
+            success: function (data) {
+                console.log("성공");
+                alert("댓글 성공");
+                $('#reply_list_' + feed_id).append("<div style='text-align: left; font-size: 13px; margin: 0 20px'> <b>{{ user.nickname }}</b> " + reply_content + "</div>")
+                location.replace('/main');
+            },
+            error: function (request, status, error) {
+                console.log("에러");
+            },
+            complete: function () {
+                console.log("완료");
+                $('#' + reply_id).val('');
+            }
+        });
+
+    })
+
+    $(".modal_close").click(function () {
+        $('#first_modal').css({
+            display: 'none'
+        });
+
+        $('#second_modal').css({
+            display: 'none'
+        });
+    })
+
+
+    let files;
+
+    $('#nav_bar_add_box').click(function () {
+        $('#first_modal').css({
+            display: 'flex'
+        })
+
+        $(document.body).css({
+            overflow: "hidden"
+        })
+
+    });
+
+    $('#feed_create_button').click(function () {
+        alert("공유하기 눌렀다ㅎㅎ" + $('#input_feed_content').val());
+
+
+        let file = files[0];
+        let image = files[0].name;
+        let content = $('#input_feed_content').val();
+
+        let fd = new FormData();
+
+        fd.append('file', file);
+        fd.append('image', image);
+        fd.append('content', content);
+
+
+        $.ajax({
+            url: "/content/upload",
+            data: fd,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log("성공");
+            },
+            error: function (request, status, error) {
+                console.log("에러")
+            },
+            complete: function () {
+                console.log("완료");
+                location.replace("/main");
+            }
+        });
+    });
+
+
+    $('.image_upload_space')
+        .on("dragover", dragOver)
+        .on("dragleave", dragOver)
+        .on("drop", uploadFiles);
+
+    function dragOver(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (e.type == "dragover") {
+            $(e.target).css({
+                "background-color": "black",
+                "outline-offset": "-20px"
+            });
+        } else {
+            $(e.target).css({
+                "outline-offset": "-10px"
+            });
+        }
+    }
+
+    function uploadFiles(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        e.dataTransfer = e.originalEvent.dataTransfer; //2
+        files = e.target.files || e.dataTransfer.files;
+        console.log("뭔가 파일을 올렸네??" + files[0].name);
+        if (files.length > 1) {
+            alert('하나만 올려라.');
+            return;
+        }
+        if (files[0].type.match(/image.*/)) {
+
+            $('#first_modal').css({
+                display: 'none'
+            });
+
+            $('#second_modal').css({
+                display: 'flex'
+            });
+
+            $('.image_upload_space').css({
+                "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
+                "outline": "none",
+                "background-size": "100%",
+                "background-repeat": "no-repeat",
+                "background-position": "center"
+            });
+        } else {
+            alert('이미지가 아닙니다.');
+            return;
+        }
+
+
+    }
+
+</script>
+
+
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+<!-- Option 2: Separate Popper and Bootstrap JS -->
+<!--
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+-->
+
+
+</body>
+
+
+</html>
